@@ -1,6 +1,7 @@
 # Image Gallery
 ## Table of contents
 * [General info](#general-info)
+* [Screenshots](#screenshots)
 * [Technologies](#technologies)
 * [Setup](#setup)
 * [Features](#features)
@@ -8,7 +9,9 @@
 
 ## General info
 This project is simple web application, which enable users watch, add, remove images.
-	
+
+## Screenshots
+
 ## Technologies
 Project is created with:
 * Python version: 3.12
