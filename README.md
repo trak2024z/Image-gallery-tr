@@ -11,6 +11,7 @@
 This project is simple web application, which enable users watch, add, remove images.
 
 ## Screenshots
+Examples of website use.
 
 ## Technologies
 Project is created with:
@@ -21,6 +22,9 @@ Project is created with:
 * PostgreSQL version: 16.2
 * Docker version: 24.0
 * Docker compose version: 2.24
+
+## Setup
+How to setup enviroment and run the website.
 
 ## Features
 What did we do?
