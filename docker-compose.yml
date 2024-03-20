@@ -1,49 +1,56 @@
 version: '3.9'
 
-
 services:
   db:
     image: postgres:14-alpine
     ports:
       - '5432:5432'
-
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
-
     volumes:
       - ./data/db:/var/lib/postgresql/data/
+    networks:
+      default:
+        ipv4_address: 172.25.0.2
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-
     ports:
       - '3000:3000'
-
     volumes:
       - ./frontend:/app/frontend
-
+      - /app/frontend/node_modules
     depends_on:
       - backend
+    networks:
+      default:
+        ipv4_address: 172.25.0.4
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
-
     ports:
       - '8000:8000'
-
     volumes:
       - ./backend:/app/backend
-
     depends_on:
       - db
+    networks:
+      default:
+        ipv4_address: 172.25.0.3
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.25.0.0/16
