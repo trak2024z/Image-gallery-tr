@@ -32,14 +32,10 @@ The project is ongoing.
 ## Install (using docker)
 1. Clone project
 2. Go to directory containing docker-compose.yml
-3. Enter command "docker compose build"
-4. After finish previous command enter "docker compose up db"
-5. After "database system is ready to accept connections" press CTRL + C to close container
-6. Enter "docker compose up"
-7. After all containers up project should be ready to use 
+3. Enter "docker compose up"
+4. After all containers up project should be ready to use 
 
 localhost:3000 is frontend
 localhost:8000 is backend
     
 Also added /test endpoint in backend to test connection between backend and frontend
-
