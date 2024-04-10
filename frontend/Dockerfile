@@ -13,3 +13,5 @@ RUN chown -R node /app/frontend/node_modules
 USER node
 
 CMD ["npm", "start"]
+
+EXPOSE 3000
