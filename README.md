@@ -38,4 +38,4 @@ The project is ongoing.
 localhost:3000 is frontend
 localhost:8000 is backend
     
-Also added /test endpoint in backend to test connection between backend and frontend
+Also added /api/test endpoint in backend to test connection between backend and frontend
