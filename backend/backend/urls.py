@@ -29,6 +29,7 @@ urlpatterns = [
     path('pictures/<int:picture_id>/comments', views.get_all_comments),
     path('pictures/<int:picture_id>/rating', views.get_rating),
     path('pictures/<int:picture_id>/comments', views.get_user_permissions_to_gallery),
-    path('user/<str:user_name>', views.get_user_info)
-    
+    path('user/<str:user_name>', views.get_user_info),
+    path('register/', views.RegisterView.as_view(), name='register'),
+    path('login/', views.LoginView.as_view(), name='login'),
 ]

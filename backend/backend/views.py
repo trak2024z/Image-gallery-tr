@@ -2,6 +2,13 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
+from rest_framework.views import APIView
+from .serializers import *
+from rest_framework.authtoken.models import Token
+from rest_framework import status
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from rest_framework.permissions import AllowAny
 @api_view(['GET'])
 def send_some_data(request):
     return JsonResponse({
@@ -63,3 +70,29 @@ def get_user_permissions_to_gallery(request, gallery_id):
         {
             'users':'Users with permission to gallery'
         })
+
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+        return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        serializer = UserLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = authenticate(
+                username=serializer.validated_data['username'],
+                password=serializer.validated_data['password']
+            )
+            if user:
+                login(request, user)
+                token, _ = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key}, status=status.HTTP_200_OK)
+            return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
