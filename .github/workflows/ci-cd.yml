@@ -16,6 +16,10 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
+    - name: Create domain
+      run: |
+        curl -d "srv=${{ secrets.SERVER_ID }}&key=${{ secrets.HOSTING_API_KEY }}&port=80&domain=p2paw.bieda.it" https://api.mikr.us/info
+
     - name: Build and run docker-compose
       run: |
         docker-compose up -d
