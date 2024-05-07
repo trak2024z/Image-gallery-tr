@@ -1,27 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
-import {useState, useEffect} from 'react';
+import Register from './Register';
+import Login from './Login';
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+
 function App() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    fetch(`/test/`)
-      .then(res => res.json())
-      .then(data => setData(data.data));
-  })
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>An Awesome Blog </h1>
-        <h3>On Django, React, Postgres, and Docker </h3>
+    <main className="App">
+      <BrowserRouter>
+      <Routes>
 
-        <p>{data}</p>
-	
-      </header>
-    </div>
+        <Route path="/register" element={<Register/>}/>
+        <Route path="/login" element={<Login/>}/>
+      </Routes>
+      </BrowserRouter>
+    </main>
   );
 }
 
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
 export default App;
