@@ -9,7 +9,7 @@ COPY . /app/frontend/
 RUN npm install --no-optional && npm cache clean --force
 
 RUN chown -R node /app/frontend/node_modules
-
+#RUN chmod -R 777 node_modules/.cache
 USER node
 
 CMD ["npm", "start"]
