@@ -7,8 +7,8 @@ from .serializers import *
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
-from rest_framework.permissions import AllowAny
+from django.contrib.auth import authenticate, login, logout
+from rest_framework.permissions import AllowAny, IsAuthenticated
 @api_view(['GET'])
 def send_some_data(request):
     return JsonResponse({
@@ -72,18 +72,21 @@ def get_user_permissions_to_gallery(request, gallery_id):
         })
 
 class RegisterView(APIView):
-    permission_classes = [AllowAny]
     def post(self, request):
+        if request.user.is_authenticated:
+            return Response({"message": "Jesteś już zalogowany"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+            user_data = UserSerializer(user).data
+            return Response({'token': token.key, 'user': user_data}, status=status.HTTP_201_CREATED)
         return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
-    permission_classes = [AllowAny]
     def post(self, request):
+        if request.user.is_authenticated:
+            return Response({"message": "Jesteś już zalogowany"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
             user = authenticate(
@@ -93,6 +96,14 @@ class LoginView(APIView):
             if user:
                 login(request, user)
                 token, _ = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key}, status=status.HTTP_200_OK)
-            return Response({'message': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+                user_data = UserSerializer(user).data
+                return Response({'token': token.key, 'user': user_data}, status=status.HTTP_200_OK)
+            return Response({'message': 'Nieprawidłowy login lub hasło'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        request.user.auth_token.delete()
+        logout(request)
+        return Response(status=status.HTTP_204_NO_CONTENT)
