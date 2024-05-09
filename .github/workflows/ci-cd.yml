@@ -1,4 +1,4 @@
-name: test CI/CD Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ Docker ]
 
-jobs:
+jobs:  
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
@@ -23,10 +23,17 @@ jobs:
     - name: Build and run docker-compose
       run: |
         docker-compose up -d
+
     - name: Run tests
       run: |
         echo "Running tests"
         # Insert your commands to run tests here
+
+    - name: Deploy to VPS
+      run: |
+        scp -P 10522 -r ${GITHUB_WORKSPACE}/ root@srv22.mikr.us:/root
+        ssh -p 10522 [your-username]@[your-vps-ip] "cd /root/P2-PAW && docker-compose up -d"
+
     - name: Cleanup
       if: always()
       run: docker-compose down
