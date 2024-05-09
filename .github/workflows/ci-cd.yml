@@ -31,8 +31,8 @@ jobs:
 
     - name: Deploy to VPS
       run: |
-        scp -P 10522 -r ${GITHUB_WORKSPACE}/ root@srv22.mikr.us:/root
-        ssh -p 10522 [your-username]@[your-vps-ip] "cd /root/P2-PAW && docker-compose up -d"
+        scp -o StrictHostKeyChecking=no -P 10522 -r ${GITHUB_WORKSPACE}/ root@srv22.mikr.us:/root
+        ssh -o StrictHostKeyChecking=no -p 10522 [your-username]@[your-vps-ip] "cd /root/P2-PAW && docker-compose up -d"
 
     - name: Cleanup
       if: always()
