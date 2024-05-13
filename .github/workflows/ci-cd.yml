@@ -31,8 +31,6 @@ jobs:
 
     - name: Deploy to VPS
       run: |
-        chmod 700 ~/.ssh
-        chmod 600 ~/.ssh/authorized_keys
         ssh-keygen -lf ~/.ssh/id_ed25519
         scp -vvv -o StrictHostKeyChecking=no -P 10522 -r ${GITHUB_WORKSPACE}/ root@srv22.mikr.us:/root
         ssh -vvv -o StrictHostKeyChecking=no -p 10522 [your-username]@[your-vps-ip] "cd /root/P2-PAW && docker-compose up -d"
