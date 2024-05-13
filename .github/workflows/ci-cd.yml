@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ Docker ]
 
-jobs:  
+jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
@@ -30,10 +30,15 @@ jobs:
         # Insert your commands to run tests here
 
     - name: Deploy to VPS
-      run: |
-        ssh-keygen -lf ~/.ssh/id_ed25519
-        scp -vvv -o StrictHostKeyChecking=no -P 10522 -r ${GITHUB_WORKSPACE}/ root@srv22.mikr.us:/root
-        ssh -vvv -o StrictHostKeyChecking=no -p 10522 [your-username]@[your-vps-ip] "cd /root/P2-PAW && docker-compose up -d"
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_IP }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 10522
+        script: |
+          cd /root/P2-PAW
+          docker-compose up -d
 
     - name: Cleanup
       if: always()
