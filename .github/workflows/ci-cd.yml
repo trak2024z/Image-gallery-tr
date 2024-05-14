@@ -37,6 +37,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 10522
+        timeout: 1200
         script: |
           pwd
           cd Image-gallery
