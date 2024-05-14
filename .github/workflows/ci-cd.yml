@@ -39,7 +39,7 @@ jobs:
         script: |
           pwd
           cd Image-gallery
-          docker-compose up -d
+          docker compose up -d
 
     - name: Cleanup
       if: always()
