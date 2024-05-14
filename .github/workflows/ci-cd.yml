@@ -38,7 +38,7 @@ jobs:
         port: 10522
         script: |
           pwd
-          cd P2-PAW
+          cd Image-gallery
           docker-compose up -d
 
     - name: Cleanup
