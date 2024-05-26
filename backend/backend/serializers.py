@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import Image
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(write_only=True)
@@ -34,11 +35,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(label="Username")
     password = serializers.CharField(label="Password",style={'input_type': 'password'},trim_whitespace=False)
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email')
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ('name', 'date', 'path', 'gallery', 'user')

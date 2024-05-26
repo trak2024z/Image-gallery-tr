@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from .views import ImageDetailView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,7 +26,7 @@ urlpatterns = [
     path('galleries/<int:gallery_id>', views.get_gallery),
     path('galleries/<int:gallery_id>/userPermissions', views.get_user_permissions_to_gallery),
     path('galleries/<int:gallery_id>/pictures', views.get_all_pictures),
-    path('pictures/<int:picture_id>', views.get_picture),
+    path('pictures/<int:picture_id>', ImageDetailView.as_view(), name='image-detail'),
     path('pictures/<int:picture_id>/comments', views.get_all_comments),
     path('pictures/<int:picture_id>/rating', views.get_rating),
     path('pictures/<int:picture_id>/comments', views.get_user_permissions_to_gallery),

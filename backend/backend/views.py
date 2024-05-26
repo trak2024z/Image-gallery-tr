@@ -9,6 +9,9 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from .models import Image
+
+
 @api_view(['GET'])
 def send_some_data(request):
     return JsonResponse({
@@ -36,12 +39,6 @@ def get_all_pictures(request, gallery_id):
             'pictures':'All pictures'
         })
 
-@api_view(['GET'])
-def get_picture(request, picture_id):
-    return JsonResponse(
-        {
-            'pictures':'Picture with id: ' + str(picture_id)
-        })
 
 @api_view(['GET'])
 def get_all_comments(request, picture_id):
@@ -107,3 +104,22 @@ class LogoutView(APIView):
         request.user.auth_token.delete()
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+            
+
+class ImageDetailView(APIView):
+    
+    def get(self, request, picture_id, format=None):
+        try:
+            photo = Image.objects.get(pk=picture_id)
+            serializer = ImageSerializer(photo)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Image.DoesNotExist:
+            return Response({"details":"Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, picture_id, format=None):
+        try:
+            photo = Image.objects.get(pk=picture_id)
+            photo.delete()
+            return Response({"details": "Image was removed."}, status=status.HTTP_204_NO_CONTENT)
+        except Image.DoesNotExist:
+            return Response({"details": "Not found."}, status=status.HTTP_404_NOT_FOUND)
