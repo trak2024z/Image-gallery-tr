@@ -120,6 +120,6 @@ class ImageDetailView(APIView):
         try:
             photo = Image.objects.get(pk=picture_id)
             photo.delete()
-            return Response({"details": "Image was removed."}, status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Image.DoesNotExist:
             return Response({"details": "Not found."}, status=status.HTTP_404_NOT_FOUND)
