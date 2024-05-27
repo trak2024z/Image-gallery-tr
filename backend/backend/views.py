@@ -1,53 +1,39 @@
 # django-react-docker/backend/backend/views.py
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.http import JsonResponse
 from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from .models import Image, Gallery
 
 
-@api_view(["GET"])
-def send_some_data(request):
-    return JsonResponse({"data": "Hello from django backend"})
+class TestEndpointView(APIView):
+    def get(self, request):
+        return Response({"data": "Hello from django backend"})
 
 
-@api_view(["GET"])
-def get_all_galeries(request):
-    return JsonResponse({"galeries": "All galleries"})
+class AllCommentsView(APIView):
+    def get(self, request, picture_id):
+        return Response({"comments": "All comments at picture with id: " + str(picture_id)})
 
 
-@api_view(["GET"])
-def get_all_pictures(request, gallery_id):
-    return JsonResponse({"pictures": "All pictures"})
+class RatingView(APIView):
+    def get(self, request, picture_id):
+        return Response({"rating": "Rating at picture with id: " + str(picture_id)})
 
 
-@api_view(["GET"])
-def get_all_comments(request, picture_id):
-    return JsonResponse(
-        {"comments": "All comments at picture with id: " + str(picture_id)}
-    )
+class UserInfoView(APIView):
+    def get(self, request, user_name):
+        return Response({"user": "Info of user with name: " + user_name})
 
 
-@api_view(["GET"])
-def get_rating(request, picture_id):
-    return JsonResponse({"rating": "Rating at picture with id: " + str(picture_id)})
-
-
-@api_view(["GET"])
-def get_user_info(request, user_name):
-    return JsonResponse({"user": "Info of user with name: " + user_name})
-
-
-@api_view(["GET"])
-def get_user_permissions_to_gallery(request, gallery_id):
-    return JsonResponse({"users": "Users with permission to gallery"})
-
+class UserPermGalView(APIView):
+    def get(self, request, gallery_id):
+        return Response({"users": "Users with permission to gallery"})
+    
 
 class RegisterView(APIView):
     def post(self, request):
@@ -106,7 +92,7 @@ class LogoutView(APIView):
 
 
 class ImageDetailView(APIView):
-    def get(self, request, picture_id, format=None):
+    def get(self, request, picture_id):
         try:
             photo = Image.objects.get(pk=picture_id)
             serializer = ImageSerializer(photo)
@@ -114,7 +100,7 @@ class ImageDetailView(APIView):
         except Image.DoesNotExist:
             return Response({"details": "Image not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, picture_id, format=None):
+    def delete(self, request, picture_id):
         try:
             photo = Image.objects.get(pk=picture_id)
             photo.delete()
@@ -124,7 +110,7 @@ class ImageDetailView(APIView):
 
 
 class GalleryDetailView(APIView):
-    def get(self, request, gallery_id, format=None):
+    def get(self, request, gallery_id):
         try:
             gallery = Gallery.objects.get(pk=gallery_id)
             serializer = GallerySerializer(gallery)
@@ -132,7 +118,7 @@ class GalleryDetailView(APIView):
         except Gallery.DoesNotExist:
             return Response({"details": "Gallery not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request, gallery_id, format=None):
+    def delete(self, request, gallery_id):
         try:
             gallery = Gallery.objects.get(pk=gallery_id)
             gallery.delete()

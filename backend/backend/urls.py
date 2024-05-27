@@ -15,24 +15,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("test/", views.send_some_data),
+    path("test/", views.TestEndpointView.as_view(), name="test"),
     path("galleries/", views.AllGalleriesAPIView.as_view(), name="all-galleries"),
     path("galleries/<int:gallery_id>", views.GalleryDetailView.as_view(), name="gallery-detail"),
     path(
         "galleries/<int:gallery_id>/userPermissions",
-        views.get_user_permissions_to_gallery,
+        views.UserPermGalView.as_view(), name="user-permision-to-gallery",
     ),
     path("galleries/<int:gallery_id>/pictures", views.GalleryPicturesAPIView.as_view(), name="all-pictures"),
     path("pictures/<int:picture_id>", views.ImageDetailView.as_view(), name="image-detail"),
-    path("pictures/<int:picture_id>/comments", views.get_all_comments),
-    path("pictures/<int:picture_id>/rating", views.get_rating),
-    path("pictures/<int:picture_id>/comments", views.get_user_permissions_to_gallery),
-    path("user/<str:user_name>", views.get_user_info),
+    path("pictures/<int:picture_id>/comments", views.AllCommentsView.as_view(), name="comments-for-picture"),
+    path("pictures/<int:picture_id>/rating", views.RatingView.as_view(), name="ratings-for-picture"),
+    path("user/<str:user_name>", views.UserInfoView.as_view(), name="user-info"),
     path("register/", views.RegisterView.as_view(), name="register"),
     path("login/", views.LoginView.as_view(), name="login"),
     path("logout/", views.LogoutView.as_view(), name="logout"),
