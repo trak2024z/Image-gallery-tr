@@ -66,3 +66,11 @@ class GallerySerializer(serializers.ModelSerializer):
     class Meta:
         model = Gallery
         fields = ("name", "date", "public")
+        
+
+class GalleryImageSerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Gallery
+        fields = ["name", "date", "public", "images"]

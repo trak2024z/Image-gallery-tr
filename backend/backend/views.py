@@ -23,11 +23,6 @@ def get_all_galeries(request):
 
 
 @api_view(["GET"])
-def get_gallery(request, gallery_id):
-    return JsonResponse({"galery": "Gallery with id: " + str(gallery_id)})
-
-
-@api_view(["GET"])
 def get_all_pictures(request, gallery_id):
     return JsonResponse({"pictures": "All pictures"})
 
@@ -144,3 +139,21 @@ class GalleryDetailView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Gallery.DoesNotExist:
             return Response({"details": "Gallery not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+class GalleryPicturesAPIView(APIView):
+    def get(self, request, gallery_id):
+        try:
+            gallery = Gallery.objects.get(pk=gallery_id)
+        except Gallery.DoesNotExist:
+            return Response({'details': 'Gallery not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = GalleryImageSerializer(gallery)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AllGalleriesAPIView(APIView):
+    def get(self, request):
+        galleries = Gallery.objects.all()
+        serializer = GallerySerializer(galleries, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
