@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Image
+from .models import Image, Gallery
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -60,3 +60,9 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ("name", "date", "path", "gallery", "user")
+
+
+class GallerySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gallery
+        fields = ("name", "date", "public")

@@ -9,7 +9,7 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .models import Image
+from .models import Image, Gallery
 
 
 @api_view(["GET"])
@@ -117,7 +117,7 @@ class ImageDetailView(APIView):
             serializer = ImageSerializer(photo)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Image.DoesNotExist:
-            return Response({"details": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"details": "Image not found."}, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, picture_id, format=None):
         try:
@@ -125,4 +125,22 @@ class ImageDetailView(APIView):
             photo.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Image.DoesNotExist:
-            return Response({"details": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"details": "Image not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GalleryDetailView(APIView):
+    def get(self, request, gallery_id, format=None):
+        try:
+            gallery = Gallery.objects.get(pk=gallery_id)
+            serializer = GallerySerializer(gallery)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Gallery.DoesNotExist:
+            return Response({"details": "Gallery not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, gallery_id, format=None):
+        try:
+            gallery = Gallery.objects.get(pk=gallery_id)
+            gallery.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Gallery.DoesNotExist:
+            return Response({"details": "Gallery not found."}, status=status.HTTP_404_NOT_FOUND)
