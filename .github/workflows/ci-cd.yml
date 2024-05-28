@@ -87,8 +87,7 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
           docker pull ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
           sed -i "s/\${TAG}/$TAG/g" docker-compose.yml
-          docker-compose down
-          docker-compose up -d
+          docker compose up -d
 
     - name: Cleanup
       if: always()
