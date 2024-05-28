@@ -21,7 +21,7 @@ services:
       retries: 5
 
   frontend:
-    image: ${{ secrets.DOCKER_USERNAME }}/frontend:${TAG}
+    image: frontend-placeholder
     ports:
       - '3000:3000'
     depends_on:
@@ -31,7 +31,7 @@ services:
         ipv4_address: 172.25.0.4
 
   backend:
-    image: ${{ secrets.DOCKER_USERNAME }}/backend:${TAG}
+    image: backend-placeholder
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -65,4 +65,3 @@ networks:
     ipam:
       config:
         - subnet: 172.25.0.0/16
-

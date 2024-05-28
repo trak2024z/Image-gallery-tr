@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches: 
-      - Docker  # Change this to the branch you want to monitor for pushes
+      - Docker
   pull_request:
     branches: 
-      - Docker  # Change this to the branch you want to monitor for pull requests
+      - Docker
 
 jobs:
   build-and-push:
@@ -33,13 +33,13 @@ jobs:
 
     - name: Build and push frontend Docker image
       run: |
-        TAG=${GITHUB_REF##*/}-${{ env.date }}
+        TAG=Docker-${GITHUB_REF##*/}-${{ env.date }}
         docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG ./frontend
         docker push ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
 
     - name: Build and push backend Docker image
       run: |
-        TAG=${GITHUB_REF##*/}-${{ env.date }}
+        TAG=Docker-${GITHUB_REF##*/}-${{ env.date }}
         docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:$TAG ./backend
         docker push ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
 
@@ -78,16 +78,19 @@ jobs:
         port: 10522
         timeout: 1200m
         script: |
-          TAG=${GITHUB_REF##*/}-${{ env.date }}
+          TAG=Docker-${GITHUB_REF##*/}-${{ env.date }}
+          DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
           if [ ! -d "Image-gallery" ]; then
-            git clone https://github.com/P2-PAW/Image-gallery -b Docker # Change this to branch you want to deploy
+            git clone https://github.com/P2-PAW/Image-gallery -b Docker
           fi
           cd Image-gallery
           echo "Pulling latest images"
-          docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
-          docker pull ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
-          sed -i "s/\${TAG}/$TAG/g" docker-compose.yml
-          docker compose up -d
+          docker pull $DOCKER_USERNAME/frontend:$TAG
+          docker pull $DOCKER_USERNAME/backend:$TAG
+          export TAG=$TAG
+          export DOCKER_USERNAME=$DOCKER_USERNAME
+          docker-compose down
+          docker-compose up -d
 
     - name: Cleanup
       if: always()
