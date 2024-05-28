@@ -21,9 +21,9 @@ jobs:
       run: |
         curl -d "srv=${{ secrets.SERVER_ID }}&key=${{ secrets.HOSTING_API_KEY }}&port=80&domain=p2paw.bieda.it" https://api.mikr.us/domain
 
-    - name: Build and run docker-compose
+    - name: Build Docker images
       run: |
-        docker-compose up -d
+        docker-compose build
 
     - name: Run tests
       run: |
@@ -39,9 +39,18 @@ jobs:
         port: 10522
         timeout: 1200m
         script: |
-          pwd
+          if [ ! -d "Image-gallery" ]; then
+            mkdir -p Image-gallery
+          fi
           cd Image-gallery
-          docker compose up -d
+          if [ -d ".git" ]; then
+            git pull origin Docker
+          else
+            git clone --branch Docker ${{ secrets.REPO_URL }} .
+          fi
+          docker-compose down
+          docker-compose build
+          docker-compose up -d
 
     - name: Cleanup
       if: always()
