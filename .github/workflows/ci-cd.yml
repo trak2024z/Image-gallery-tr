@@ -2,10 +2,10 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: 
+    branches:
       - Docker
   pull_request:
-    branches: 
+    branches:
       - Docker
 
 jobs:
@@ -76,7 +76,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 10522
-        timeout: 1200m
+        timeout: 120m
         script: |
           TAG=Docker-${GITHUB_REF##*/}-${{ env.date }}
           DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
@@ -95,3 +95,4 @@ jobs:
     - name: Cleanup
       if: always()
       run: docker-compose down
+\
