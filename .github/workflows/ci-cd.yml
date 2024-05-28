@@ -52,9 +52,9 @@ jobs:
           else
             git clone --branch Docker ${{ secrets.REPO_URL }} .
           fi
-          docker-compose down
-          docker-compose build
-          docker-compose up -d
+          docker compose down
+          docker compose build
+          docker compose up -d
 
     - name: Cleanup
       if: always()
