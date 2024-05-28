@@ -163,23 +163,16 @@ button {
     padding: 20px;
 }
 
-.photo-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-top: 20px;
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.photo-column {
-    width: calc(33.33% - 10px); /* Ustawiamy szerokość kolumny na 1/3 szerokości z odstępami */
-    margin-bottom: 20px;
-}
-
-.photo-column img {
-    width: 100%; /* Ustawiamy szerokość zdjęcia na 100% kolumny */
-    height: 400px; /* Ustawiamy stałą wysokość zdjęcia */
-    object-fit: cover; /* Zachowujemy proporcje i wypełniamy całe pole */
-    border-radius: 0.5rem; /* Dodajemy zaokrąglone krawędzie */
+.image-item img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .dropdown {
