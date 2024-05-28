@@ -84,10 +84,10 @@ jobs:
           fi
           cd Image-gallery
           echo "Pulling latest images"
-          docker-compose down
+          docker compose down
           docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
           docker pull ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
-          docker-compose up -d
+          docker compose up -d
 
     - name: Cleanup
       if: always()
