@@ -14,7 +14,7 @@ class Gallery(models.Model):
 class Image(models.Model):
     name = models.CharField(max_length=255)
     date = models.DateField(auto_now_add=True)
-    path = models.CharField(max_length=255)
+    path = models.ImageField(upload_to='images/')
     gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

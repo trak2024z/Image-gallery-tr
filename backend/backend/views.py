@@ -7,8 +7,8 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated
-from .models import Image, Gallery
-
+from .models import *
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class TestEndpointView(APIView):
     def get(self, request):
@@ -143,3 +143,36 @@ class AllGalleriesAPIView(APIView):
         galleries = Gallery.objects.all()
         serializer = GallerySerializer(galleries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class CreateGalleryView(APIView):
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return Response({"message": "Dostęp tylko dla zalogowanych"}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = GallerySerializerPost(data=request.data)
+        if serializer.is_valid():
+            gallery = serializer.save()
+            GalleryPermission.objects.create(gallery=gallery, user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AddPictureView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, pk):
+        if not request.user.is_authenticated:
+            return Response({"message": "Dostęp tylko dla zalogowanych"}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            gallery = Gallery.objects.get(pk=pk)
+        except Gallery.DoesNotExist:
+            return Response({"message": "Galeria o podanym id nie istnieje."}, status=status.HTTP_404_NOT_FOUND)
+
+        data = request.data.copy()
+        data['gallery'] = gallery.id
+        data['user'] = request.user.id
+        serializer = ImageSerializerPost(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Image, Gallery
+from .models import *
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -74,3 +74,18 @@ class GalleryImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gallery
         fields = ["name", "date", "public", "images"]
+
+class GallerySerializerPost(serializers.ModelSerializer):
+    class Meta:
+        model = Gallery
+        fields = '__all__'
+
+    def validate_name(self, value):
+        if Gallery.objects.filter(name=value).exists():
+            raise serializers.ValidationError("Galeria o podanej nazwie już istnieje.")
+        return value
+
+class ImageSerializerPost(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = '__all__'
