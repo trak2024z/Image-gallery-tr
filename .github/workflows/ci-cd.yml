@@ -80,11 +80,10 @@ jobs:
         script: |
           TAG=${GITHUB_REF##*/}-${{ env.date }}
           if [ ! -d "Image-gallery" ]; then
-            mkdir -p Image-gallery
+            git clone https://github.com/P2-PAW/Image-gallery -b Docker # Change this to branch you want to deploy
           fi
           cd Image-gallery
           echo "Pulling latest images"
-          docker compose down
           docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
           docker pull ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
           docker compose up -d
