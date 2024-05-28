@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 120  # Increased timeout to 120 minutes
+    timeout-minutes: 60
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 10522
-        timeout: 120m  # Increased timeout to 120 minutes
+        timeout: 1200m  # Increased timeout to 120 minutes
         script: |
           if [ ! -d "Image-gallery" ]; then
             mkdir -p Image-gallery
