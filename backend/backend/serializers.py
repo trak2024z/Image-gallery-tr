@@ -73,7 +73,7 @@ class GalleryImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gallery
-        fields = ["name", "date", "public", "images"]
+        fields = ("id", "name", "date", "public", "images")
 
 class GallerySerializerPost(serializers.ModelSerializer):
     class Meta:
