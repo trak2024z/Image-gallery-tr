@@ -21,14 +21,9 @@ services:
       retries: 5
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: ${{ secrets.DOCKER_USERNAME }}/frontend:${TAG}
     ports:
       - '3000:3000'
-    volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
     depends_on:
       - backend
     networks:
@@ -36,17 +31,13 @@ services:
         ipv4_address: 172.25.0.4
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ${{ secrets.DOCKER_USERNAME }}/backend:${TAG}
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
     ports:
       - '8000:8000'
-    volumes:
-      - ./backend:/app/backend
     depends_on:
       db:
         condition: service_healthy
@@ -74,3 +65,4 @@ networks:
     ipam:
       config:
         - subnet: 172.25.0.0/16
+

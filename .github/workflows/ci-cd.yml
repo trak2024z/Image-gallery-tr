@@ -86,7 +86,9 @@ jobs:
           echo "Pulling latest images"
           docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
           docker pull ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
-          docker compose up -d
+          sed -i "s/\${TAG}/$TAG/g" docker-compose.yml
+          docker-compose down
+          docker-compose up -d
 
     - name: Cleanup
       if: always()
