@@ -85,10 +85,10 @@ jobs:
           fi
           cd Image-gallery
           echo "Pulling latest images"
-          docker pull $DOCKER_USERNAME/frontend:$TAG
-          docker pull $DOCKER_USERNAME/backend:$TAG
           export TAG=$TAG
           export DOCKER_USERNAME=$DOCKER_USERNAME
+          docker pull $DOCKER_USERNAME/frontend:$TAG
+          docker pull $DOCKER_USERNAME/backend:$TAG
           docker-compose down
           docker-compose up -d
 
