@@ -15,22 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
-from . import views
+from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+from .views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('test/', views.send_some_data),
-    path('galleries/', views.get_all_galeries),
-    path('galleries/<int:gallery_id>', views.get_gallery),
-    path('galleries/<int:gallery_id>/userPermissions', views.get_user_permissions_to_gallery),
-    path('galleries/<int:gallery_id>/pictures', views.get_all_pictures),
-    path('pictures/<int:picture_id>', views.get_picture),
-    path('pictures/<int:picture_id>/comments', views.get_all_comments),
-    path('pictures/<int:picture_id>/rating', views.get_rating),
-    path('pictures/<int:picture_id>/comments', views.get_user_permissions_to_gallery),
-    path('user/<str:user_name>', views.get_user_info),
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('login/', views.LoginView.as_view(), name='login'),
-    path('logout/', views.LogoutView.as_view(), name='logout'),
-]
+    path("admin/", admin.site.urls),
+    path("test/", TestEndpointView.as_view(), name="test"),
+    path("galleries/", AllGalleriesAPIView.as_view(), name="all-galleries"),
+    path("galleries/<int:gallery_id>", GalleryDetailView.as_view(), name="gallery-detail"),
+    path(
+        "galleries/<int:gallery_id>/userPermissions",
+        UserPermGalView.as_view(), name="user-permision-to-gallery",
+    ),
+    path("galleries/<int:gallery_id>/pictures", GalleryPicturesAPIView.as_view(), name="all-pictures"),
+    path("pictures/<int:picture_id>", ImageDetailView.as_view(), name="image-detail"),
+    path("pictures/<int:picture_id>/comments", AllCommentsView.as_view(), name="comments-for-picture"),
+    path("pictures/<int:picture_id>/rating", RatingView.as_view(), name="ratings-for-picture"),
+    path("user/<str:user_name>", UserInfoView.as_view(), name="user-info"),
+    path("register/", RegisterView.as_view(), name="register"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
+    path('gallery/', CreateGalleryView.as_view(), name='create-gallery'),
+    path('galleries/<int:pk>/picture/', AddPictureView.as_view(), name='add-picture'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
