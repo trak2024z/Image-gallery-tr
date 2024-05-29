@@ -80,7 +80,7 @@ jobs:
         port: 10522
         timeout: 120m
         script: |
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BRANCH_NAME=${GITHUB_REF##*/}
           TAG=${BRANCH_NAME}-${{ env.date }}
           DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
           if [ ! -d "Image-gallery" ]; then
