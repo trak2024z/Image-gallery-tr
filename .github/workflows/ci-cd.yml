@@ -1,0 +1,102 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - Docker
+  pull_request:
+    branches:
+      - Docker
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Get commit date
+      id: get-date
+      run: |
+        COMMIT_DATE=$(git log -1 --format=%cd --date=format:'%Y%m%d')
+        echo "date=$COMMIT_DATE" >> $GITHUB_ENV
+
+    - name: Build and push frontend Docker image
+      run: |
+        # BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        TAG=${{ env.date }}
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG ./frontend
+        docker push ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
+
+    - name: Build and push backend Docker image
+      run: |
+        # BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        TAG=${{ env.date }}
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:$TAG ./backend
+        docker push ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
+
+    - name: Create domain
+      run: |
+        curl -d "srv=${{ secrets.SERVER_ID }}&key=${{ secrets.HOSTING_API_KEY }}&port=80&domain=p2paw.bieda.it" https://api.mikr.us/domain
+
+    - name: Run tests
+      run: |
+        echo "Running tests"
+        # Insert your commands to run tests here
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Get commit date
+      id: get-date
+      run: |
+        COMMIT_DATE=$(git log -1 --format=%cd --date=format:'%Y%m%d')
+        echo "date=$COMMIT_DATE" >> $GITHUB_ENV
+
+    - name: Set up environment variables
+      run: |
+        echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        echo "TAG=${GITHUB_REF#refs/heads/}-${{ env.date }}" >> $GITHUB_ENV
+        echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
+
+    - name: Enable amfetamina
+      run: |
+        curl -d "srv=${{ secrets.SERVER_ID }}&key=${{ secrets.HOSTING_API_KEY }}" https://api.mikr.us/amfetamina
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_IP }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 10522
+        timeout: 120m
+        script: |
+          export TAG=${{ env.date }}
+          export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+          if [ ! -d "Image-gallery" ]; then
+            git clone https://github.com/P2-PAW/Image-gallery -b Docker
+          fi
+          cd Image-gallery
+          echo "Pulling latest images"
+          docker pull $DOCKER_USERNAME/frontend:$TAG
+          docker pull $DOCKER_USERNAME/backend:$TAG
+          docker compose down
+          docker compose up -d
+
+    - name: Cleanup
+      if: always()
+      run: docker-compose down
