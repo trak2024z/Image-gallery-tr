@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - Docker
+      - Back&Front
   pull_request:
     branches:
-      - Docker
+      - Back&Front
 
 jobs:
   build-and-push:
@@ -88,7 +88,7 @@ jobs:
           export TAG=${{ env.date }}
           export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
           if [ ! -d "Image-gallery" ]; then
-            git clone https://github.com/P2-PAW/Image-gallery -b Docker
+            git clone https://github.com/P2-PAW/Image-gallery -b Back&Front
           fi
           cd Image-gallery
           echo "Pulling latest images"
