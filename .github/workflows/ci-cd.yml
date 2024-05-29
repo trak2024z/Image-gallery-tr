@@ -33,15 +33,15 @@ jobs:
 
     - name: Build and push frontend Docker image
       run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        TAG=${BRANCH_NAME}-${{ env.date }}
+        # BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        TAG=${{ env.date }}
         docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG ./frontend
         docker push ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
 
     - name: Build and push backend Docker image
       run: |
-        BRANCH_NAME=${GITHUB_REF#refs/heads/}
-        TAG=${BRANCH_NAME}-${{ env.date }}
+        # BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        TAG=${{ env.date }}
         docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:$TAG ./backend
         docker push ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
 
@@ -85,8 +85,7 @@ jobs:
         port: 10522
         timeout: 120m
         script: |
-          export BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          export TAG=${BRANCH_NAME}-${{ env.date }}
+          export TAG=${{ env.date }}
           export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
           if [ ! -d "Image-gallery" ]; then
             git clone https://github.com/P2-PAW/Image-gallery -b $BRANCH_NAME
