@@ -87,7 +87,8 @@ jobs:
         script: |
           export TAG=${{ env.date }}
           export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-          git clone https://github.com/P2-PAW/Image-gallery -b Back&Front
+          rm -rf Image-gallery
+          git clone https://github.com/P2-PAW/Image-gallery -b "Back&Front"
           cd Image-gallery
           echo "Pulling latest images"
           docker pull $DOCKER_USERNAME/frontend:$TAG
