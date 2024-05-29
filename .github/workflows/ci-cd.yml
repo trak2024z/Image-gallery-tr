@@ -33,13 +33,15 @@ jobs:
 
     - name: Build and push frontend Docker image
       run: |
-        TAG=Docker-${GITHUB_REF##*/}-${{ env.date }}
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        TAG=${BRANCH_NAME}-${{ env.date }}
         docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG ./frontend
         docker push ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
 
     - name: Build and push backend Docker image
       run: |
-        TAG=Docker-${GITHUB_REF##*/}-${{ env.date }}
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+        TAG=${BRANCH_NAME}-${{ env.date }}
         docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:$TAG ./backend
         docker push ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
 
@@ -78,17 +80,18 @@ jobs:
         port: 10522
         timeout: 120m
         script: |
-          TAG=Docker-${GITHUB_REF##*/}-${{ env.date }}
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          TAG=${BRANCH_NAME}-${{ env.date }}
           DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
           if [ ! -d "Image-gallery" ]; then
-            git clone https://github.com/P2-PAW/Image-gallery -b Docker
+            git clone https://github.com/P2-PAW/Image-gallery -b ${BRANCH_NAME}
           fi
           cd Image-gallery
           echo "Pulling latest images"
-          export TAG=$TAG
-          export DOCKER_USERNAME=$DOCKER_USERNAME
           docker pull $DOCKER_USERNAME/frontend:$TAG
           docker pull $DOCKER_USERNAME/backend:$TAG
+          export TAG=$TAG
+          export DOCKER_USERNAME=$DOCKER_USERNAME
           docker-compose down
           docker-compose up -d
 
