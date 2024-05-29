@@ -67,6 +67,12 @@ jobs:
         COMMIT_DATE=$(git log -1 --format=%cd --date=format:'%Y%m%d')
         echo "date=$COMMIT_DATE" >> $GITHUB_ENV
 
+    - name: Set up environment variables
+      run: |
+        echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        echo "TAG=${GITHUB_REF#refs/heads/}-${{ env.date }}" >> $GITHUB_ENV
+        echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
+
     - name: Enable amfetamina
       run: |
         curl -d "srv=${{ secrets.SERVER_ID }}&key=${{ secrets.HOSTING_API_KEY }}" https://api.mikr.us/amfetamina
@@ -80,19 +86,13 @@ jobs:
         port: 10522
         timeout: 120m
         script: |
-          BRANCH_NAME=${GITHUB_REF##*/}
-          TAG=${BRANCH_NAME}-${{ env.date }}
-          DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
           if [ ! -d "Image-gallery" ]; then
-            git clone https://github.com/P2-PAW/Image-gallery -b ${BRANCH_NAME}
+            git clone https://github.com/P2-PAW/Image-gallery -b $BRANCH_NAME
           fi
           cd Image-gallery
           echo "Pulling latest images"
-          echo $TAG
           docker pull $DOCKER_USERNAME/frontend:$TAG
           docker pull $DOCKER_USERNAME/backend:$TAG
-          export TAG=$TAG
-          export DOCKER_USERNAME=$DOCKER_USERNAME
           docker compose down
           docker compose up -d
 
