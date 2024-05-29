@@ -88,12 +88,13 @@ jobs:
           fi
           cd Image-gallery
           echo "Pulling latest images"
+          echo $TAG
           docker pull $DOCKER_USERNAME/frontend:$TAG
           docker pull $DOCKER_USERNAME/backend:$TAG
           export TAG=$TAG
           export DOCKER_USERNAME=$DOCKER_USERNAME
-          docker-compose down
-          docker-compose up -d
+          docker compose down
+          docker compose up -d
 
     - name: Cleanup
       if: always()
