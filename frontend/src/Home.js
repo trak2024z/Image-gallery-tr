@@ -1,14 +1,33 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faPlus } from '@fortawesome/free-solid-svg-icons';
-const Home = () => {
+import axios from './api/axios';
+import Modal from './Modal';
 
+const Home = () => {
     const token = localStorage.getItem("token");
     const userJson = localStorage.getItem("user");
     const user = userJson ? JSON.parse(userJson) : null;
+    const [images, setImages] = useState([]);
+    const [selectedImg, setSelectedImg] = useState(null);
+
+    useEffect(() => {
+        const getImages = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/galleries/1/pictures`);
+                setImages(response.data.images);
+            } catch (error) {
+                console.error('Error fetching images:', error);
+            }
+        };
+        getImages();
+    }, []);
+
     return (
         <div>
-          <nav className="navbar">
+            <nav className="navbar">
                 <div className="navbar-brand">IMAGEGALLERY</div>
                 <div className="navbar-buttons">
                     {token && user ? (
@@ -36,31 +55,18 @@ const Home = () => {
                 </div>
             </nav>
             <div className="main-content">
-            {token && user ? (
                 <div>
-                    <div className="photo-grid">
-                            <div className="photo-column">
-                                <img src="https://i.imgur.com/CzXTtJV.jpg"/>
-                                <img src="https://i.imgur.com/OB0y6MR.jpg"/>
+                    <div className="image-grid">
+                        {images.map(image => (
+                            <div className="image-item" key={image.id} onClick={() => setSelectedImg(`http://localhost:8000${image.path}`)}>
+                                <img src={`http://localhost:8000${image.path}`} alt={image.name} />
                             </div>
-                            <div className="photo-column">
-                                <img src="https://farm4.staticflickr.com/3075/3168662394_7d7103de7d_z_d.jpg"/>
-                                <img src="https://farm9.staticflickr.com/8505/8441256181_4e98d8bff5_z_d.jpg"/>
-                            </div>
-                            <div className="photo-column">
-                                <img src="https://farm9.staticflickr.com/8295/8007075227_dc958c1fe6_z_d.jpg"/>
-                                <img src="https://farm4.staticflickr.com/3224/3081748027_0ee3d59fea_z_d.jpg"/>
-                            </div>
-                        </div>
-                    {/* <a href="/logout">Logout</a> */}
+                        ))}
+                    </div>
                 </div>
-            ) : (
-                <div>
-                    <p>You are not logged in.</p>
-                </div>
-            )}
+            </div>
+            {selectedImg && <Modal selectedImg={selectedImg} setSelectedImg={setSelectedImg} />}
         </div>
-      </div>
     );
 };
 
