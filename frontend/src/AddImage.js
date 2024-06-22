@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios from './api/axios';
+import { useNavigate } from "react-router-dom";
+
 const AddImage = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
         path: null,
@@ -26,6 +29,7 @@ const AddImage = () => {
             }
           });
           console.log('Image uploaded successfully:', response.data);
+          navigate("/");
         } catch (error) {
           console.error('Error uploading image:', error);
         }

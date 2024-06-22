@@ -59,7 +59,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ("name", "date", "path", "gallery", "user")
+        fields = ("id", "name", "date", "path", "gallery", "user")
 
 
 class GallerySerializer(serializers.ModelSerializer):
